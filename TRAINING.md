@@ -39,10 +39,7 @@ yolo detect train model=yolov8n.pt data=yolo_dataset/data.yaml epochs=100 imgsz=
 ### 訓練資料
 使用 `C:\Users\insta\Desktop\dataset\rec_dataset\`（已包含 hard negative crops）
 
-壓縮後上傳 Google Drive：
-```powershell
-Compress-Archive -Path "C:\Users\insta\Desktop\dataset\rec_dataset\*" -DestinationPath "C:\Users\insta\Desktop\dataset\rec_dataset_v2.zip" -Force
-```
+Hard negative mining 後用 Python 重新打包（見 Part C），上傳到 Google Drive：`MyDrive/ocr_project/rec_dataset_v2.zip`
 
 ### 訓練完成後輸出
 - `model.pdparams`（PaddlePaddle 格式，約 10MB）
@@ -65,10 +62,40 @@ python scripts/mine_failures.py
 # 輸出：rec_hard_negatives/train/ + val/ + 對應 label.txt
 ```
 
-merge 到 rec_dataset：
-```powershell
-Get-Content "rec_hard_negatives\train_label.txt" | Add-Content "C:\Users\insta\Desktop\dataset\rec_dataset\train_label.txt"
-Copy-Item "rec_hard_negatives\train\*" "C:\Users\insta\Desktop\dataset\rec_dataset\train\"
+merge 到 rec_dataset（**必須用 Python**，PowerShell `Add-Content` 會把 UTF-8 轉成 UTF-16 導致標注檔損壞）：
+
+```python
+# merge_hard_negatives.py
+from pathlib import Path
+
+REC_DIR = Path(r"C:\Users\insta\Desktop\dataset\rec_dataset")
+HN_DIR  = Path(r"C:\Users\insta\Desktop\date-recognition\rec_hard_negatives")
+
+for split in ["train", "val"]:
+    orig = (REC_DIR / f"{split}_label.txt").read_text(encoding="utf-8").splitlines()
+    hn   = (HN_DIR  / f"{split}_label.txt").read_text(encoding="utf-8").splitlines()
+    merged = [l for l in orig + hn if l.strip()]
+    (REC_DIR / f"{split}_label.txt").write_text("\n".join(merged), encoding="utf-8")
+    print(f"{split}: {len(merged)} lines")
+
+import shutil
+for img in (HN_DIR / "train").iterdir():
+    shutil.copy2(img, REC_DIR / "train" / img.name)
+for img in (HN_DIR / "val").iterdir():
+    shutil.copy2(img, REC_DIR / "val" / img.name)
+```
+
+merge 後重新打包：
+```python
+import zipfile
+from pathlib import Path
+REC_DIR = Path(r"C:\Users\insta\Desktop\dataset\rec_dataset")
+with zipfile.ZipFile(r"C:\Users\insta\Desktop\dataset\rec_dataset_v2.zip", "w", zipfile.ZIP_DEFLATED) as z:
+    for f in ["train_label.txt", "val_label.txt"]:
+        z.write(REC_DIR / f, f)
+    for split in ["train", "val"]:
+        for img in (REC_DIR / split).iterdir():
+            z.write(img, f"{split}/{img.name}")
 ```
 
 ---
@@ -80,4 +107,4 @@ Copy-Item "rec_hard_negatives\train\*" "C:\Users\insta\Desktop\dataset\rec_datas
 | v1 | RapidOCR 預設（未 fine-tune） | 56.9% |
 | v2 | 第一版 fine-tune（rec_dataset 1846 train） | 83.8% |
 | v2.1 | + Deskew 前處理 + E-class regex 修正 | 84.4% |
-| v3 | 目標：rec_dataset v2（2046 train，含 hard negatives） | 目標 87%+ |
+| v3 | rec_dataset v2（2046 train / 519 val，含 hard negatives），從 v2 fine-tune 20 epochs | 訓練中 |
