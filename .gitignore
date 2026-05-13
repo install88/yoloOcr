@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Dataset images (too large for git)
+yolo_dataset/
+rec_hard_negatives/
+results/*.jpg
+results/*.png
+
+# Large model files (tracked via git lfs or manual copy)
+yolov8n.pt
+models/model.pdparams
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# YOLO run artifacts (keep weights but skip bulk logs)
+runs/*/events.out.*
+runs/*/labels*/
+runs/*/train_batch*.jpg
+runs/*/val_batch*.jpg
+runs/*/confusion_matrix*.png
+runs/*/results.png
+runs/*/PR_curve.png
+runs/*/F1_curve.png
+runs/*/P_curve.png
+runs/*/R_curve.png
+
+# Misc
+*.DS_Store
+Thumbs.db
+yolo_dataset_for_colab.zip
