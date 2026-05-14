@@ -22,15 +22,14 @@ from tqdm import tqdm
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
-import sys as _sys; _sys.path.insert(0, str(Path(__file__).parent))
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).parent))
+_sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from date_patterns import is_date_text, extract_date
+from config import DATASET_DIR, MODELS_DIR, REC_MODEL, YOLO_DIR
 
-DATASET_DIR = Path("C:/Users/insta/Desktop/dataset")
-MODELS_DIR  = Path("C:/Users/insta/Desktop/date-recognition/models")
-OUT_DIR     = Path("C:/Users/insta/Desktop/date-recognition/rec_hard_negatives")
-
-REC_MODEL   = MODELS_DIR / "rec_finetuned.onnx"
-MIN_HEIGHT  = 48
+OUT_DIR = YOLO_DIR / "rec_hard_negatives"
+MIN_HEIGHT = 48
 
 
 def _digits_only(s: str) -> str:

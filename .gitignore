@@ -11,6 +11,7 @@ yolo_dataset/
 rec_hard_negatives/
 results/*.jpg
 results/*.png
+results/*.html
 
 # Large model files (tracked via git lfs or manual copy)
 yolov8n.pt

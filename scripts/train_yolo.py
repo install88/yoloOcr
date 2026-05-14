@@ -3,10 +3,10 @@ Step 4: Train YOLOv8n on the converted date-region dataset.
 Run after convert_to_yolo.py completes.
 """
 from pathlib import Path
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from ultralytics import YOLO
-
-YOLO_DATASET = Path("C:/Users/insta/Desktop/date-recognition/yolo_dataset")
-OUTPUT_DIR   = Path("C:/Users/insta/Desktop/date-recognition/runs")
+from config import YOLO_DATASET_DIR as YOLO_DATASET, RUNS_DIR as OUTPUT_DIR
 
 
 def main():
@@ -14,18 +14,18 @@ def main():
     if not data_yaml.exists():
         raise FileNotFoundError(f"Run convert_to_yolo.py first. Missing: {data_yaml}")
 
-    model = YOLO("yolov8n.pt")  # auto-downloads ~6MB on first run
+    model = YOLO("yolo11n.pt")  # YOLO11n (Ultralytics 2024-09); ~2.6M params
 
     results = model.train(
         data=str(data_yaml),
         epochs=100,
         imgsz=640,
-        batch=16,
+        batch=32,
         patience=20,          # early stopping
         project=str(OUTPUT_DIR),
-        name="date_det_v1",
+        name="date_det_v2",
         exist_ok=True,
-        device="cpu",         # change to 0 if GPU available
+        device=0,             # GPU; set to "cpu" if no CUDA
         workers=4,
         cache=False,
         augment=True,

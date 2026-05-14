@@ -23,6 +23,8 @@ _FULL_DATE = (
     r"\d{4}[./\-,]\d{1,2}[./\-,]\d{1,2}"
     # DD.MM.YYYY / DD/MM/YYYY
     r"|\d{1,2}[./\-,]\d{1,2}[./\-,]\d{4}"
+    # YYYY-MMDD 緊湊式 (年-月日合併，如 2025-1030 = 2025/10/30)
+    r"|\d{4}[./\-]\d{4}(?!\d)"
     # YYYY MM DD (空格分隔，前後可有非數字)
     r"|\d{4}\s+\d{1,2}\s+\d{1,2}"
     # DD MM YYYY (空格分隔)
@@ -65,9 +67,9 @@ DATE_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
-# 用於最終抽取日期字串（只抓完整日期，不抓純年月）
+# 用於最終抽取日期字串（完整日期優先，找不到才退回年月）
 EXTRACT_PATTERN = re.compile(
-    f"(?:{_FULL_DATE})",
+    f"(?:{_FULL_DATE}|{_YEAR_MONTH})",
     re.IGNORECASE,
 )
 

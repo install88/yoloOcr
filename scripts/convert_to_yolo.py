@@ -13,12 +13,11 @@ import cv2
 from pathlib import Path
 from tqdm import tqdm
 
-import sys as _sys; _sys.path.insert(0, str(Path(__file__).parent))
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).parent))
+_sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from date_patterns import is_date_text
-
-DATASET_DIR  = Path("C:/Users/insta/Desktop/dataset")
-OUTPUT_DIR   = Path("C:/Users/insta/Desktop/date-recognition/yolo_dataset")
-RESULTS_DIR  = Path("C:/Users/insta/Desktop/date-recognition/results")
+from config import DATASET_DIR, YOLO_DATASET_DIR as OUTPUT_DIR, RESULTS_DIR
 
 CLASS_NAMES = ["date"]
 

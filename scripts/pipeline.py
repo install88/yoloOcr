@@ -25,19 +25,17 @@ from tqdm import tqdm
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
-import sys as _sys; _sys.path.insert(0, str(Path(__file__).parent))
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).parent))
+_sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from date_patterns import extract_date, is_date_text
+from config import DATASET_DIR, MODELS_DIR, RESULTS_DIR, YOLO_MODEL, REC_MODEL
 
 from ultralytics import YOLO
 from rapidocr_onnxruntime import RapidOCR
 
-DATASET_DIR  = Path("C:/Users/insta/Desktop/dataset")
-MODELS_DIR   = Path("C:/Users/insta/Desktop/date-recognition/models")
-RESULTS_DIR  = Path("C:/Users/insta/Desktop/date-recognition/results")
-RESULTS_DIR.mkdir(exist_ok=True)
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-YOLO_MODEL  = MODELS_DIR / "best.pt"
-REC_MODEL   = MODELS_DIR / "rec_finetuned.onnx"   # set to None to use RapidOCR default
 CONF_THRESH = 0.25
 PADDING     = 12          # px added around each detected bbox before rec
 REPORT_HTML = RESULTS_DIR / "report.html"

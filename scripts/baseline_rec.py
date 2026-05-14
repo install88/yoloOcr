@@ -16,12 +16,13 @@ from rapidocr_onnxruntime import RapidOCR
 # Force UTF-8 stdout so Chinese chars don't crash on Windows CP950
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
 
-import sys as _sys; _sys.path.insert(0, str(Path(__file__).parent))
+import sys as _sys
+_sys.path.insert(0, str(Path(__file__).parent))
+_sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from date_patterns import is_date_text
+from config import DATASET_DIR, RESULTS_DIR
 
-DATASET_DIR = Path("C:/Users/insta/Desktop/dataset")
-RESULTS_DIR = Path("C:/Users/insta/Desktop/date-recognition/results")
-RESULTS_DIR.mkdir(exist_ok=True)
+RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def poly_to_bbox(points: list) -> tuple[int, int, int, int]:

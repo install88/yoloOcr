@@ -7,10 +7,13 @@ Outputs:
 """
 import json
 import re
+import sys as _sys
 from pathlib import Path
 from collections import Counter
 
-DATASET_DIR = Path("C:/Users/insta/Desktop/dataset")
+_sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from config import DATASET_DIR
+
 TRAIN_LABEL = DATASET_DIR / "train_label.txt"
 VAL_LABEL   = DATASET_DIR / "val_label.txt"
 
